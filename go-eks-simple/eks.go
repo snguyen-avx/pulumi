@@ -5,6 +5,8 @@ import (
 	"log"
 	"strconv"
 
+	"github.com/pulumi/pulumi-kubernetes/sdk/v3/go/kubernetes/yaml"
+
 	ec2x "github.com/pulumi/pulumi-awsx/sdk/go/awsx/ec2"
 	eksx "github.com/pulumi/pulumi-eks/sdk/go/eks"
 
@@ -16,7 +18,7 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi/config"
 
 	corev1 "github.com/pulumi/pulumi-kubernetes/sdk/v3/go/kubernetes/core/v1"
-	"github.com/pulumi/pulumi-kubernetes/sdk/v3/go/kubernetes/helm/v3"
+	// "github.com/pulumi/pulumi-kubernetes/sdk/v3/go/kubernetes/helm/v3"
 	metav1 "github.com/pulumi/pulumi-kubernetes/sdk/v3/go/kubernetes/meta/v1"
 )
 
@@ -291,14 +293,9 @@ func (c *Cluster) New(ctx *pulumi.Context) error {
 	if err != nil {
 		return err
 	}
-
-	_, err = helm.NewRelease(ctx, "nginx-ingress", &helm.ReleaseArgs{
-		Chart: pulumi.String("ingress-nginx"),
-		RepositoryOpts: &helm.RepositoryOptsArgs{
-			Repo: pulumi.String("https://kubernetes.github.io/ingress-nginx"),
-		},
-		Namespace:       pulumi.String("nginx"),
-		CreateNamespace: pulumi.Bool(true),
+	
+	_, err = yaml.NewConfigFile(ctx, "gw-api-crd", &yaml.ConfigFileArgs{
+		File: "gw-api-crd.yaml",
 	}, pulumi.Provider(k8sProvider))
 	if err != nil {
 		return err

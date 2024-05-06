@@ -19,3 +19,5 @@
 
 # Go workspace file
 go.work
+local
+Pulumi.go-eks-simple-dev.yaml

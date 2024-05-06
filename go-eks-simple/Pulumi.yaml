@@ -1,0 +1,3 @@
+name: go-eks-simple
+runtime: go
+description: Create an eks cluster.

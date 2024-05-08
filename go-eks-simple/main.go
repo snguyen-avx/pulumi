@@ -49,6 +49,17 @@ func main() {
 		}
 		ctx.Export("kubeconfig", eksCluster.Output.KubeconfigJson)
 
+		gatewayRelease := &GatewayRelease{
+			Provider: eksCluster.Provider,
+			Values:   cfg.GatewayValues,
+		}
+		if err := gatewayRelease.New(ctx); err != nil {
+			return err
+		}
+
+		ctx.Export("gatewayChart", gatewayRelease.Output.Chart)
+		ctx.Export("gatewayValues", gatewayRelease.Output.Values)
+
 		return nil
 	})
 }

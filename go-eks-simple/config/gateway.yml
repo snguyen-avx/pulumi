@@ -1,0 +1,60 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod-gateway
+spec:
+  acme:
+    email: sre-team@aviatrix.com
+    preferredChain: ""
+    privateKeySecretRef:
+      name: letsencrypt
+    server: https://acme-v02.api.letsencrypt.org/directory
+    solvers:
+    - http01:
+        gatewayHTTPRoute:
+          parentRefs:
+          - kind: Gateway
+            name: testgateway
+            namespace: hello-world-observability-load-testing
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: testgateway
+  namespace: hello-world-observability-load-testing
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod-gateway
+    kubernetes.io/tls-acme: "true"
+spec:
+  gatewayClassName: nginx
+  listeners:
+  - hostname: hello-world-observability.gw.sre.aviatrix.red
+    name: http
+    port: 80
+    protocol: HTTP
+  - hostname: hello-world-observability.gw.sre.aviatrix.red
+    name: https
+    port: 443
+    protocol: HTTPS
+    tls:
+      certificateRefs:
+      - name: hello-world-observability-gw-sre-aviatrix-red-tls
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: testroute
+  namespace: hello-world-observability-load-testing
+spec:
+  hostnames:
+  - hello-world-observability.gw.sre.aviatrix.red
+  parentRefs:
+  - name: testgateway
+  rules:
+  - backendRefs:
+    - name: hello-world-observability-load-testin-service-c85e9cd3
+      port: 8090
+    matches:
+    - path:
+        type: PathPrefix
+        value: /

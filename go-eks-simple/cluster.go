@@ -23,16 +23,20 @@ type Cluster struct {
 	NodeGroup        *eks.NodeGroup
 	Min              int
 	Max              int
+	InstanceType     string
 	KubeConfig       string
 	Provider         *kubernetes.Provider
 }
 
 func (c *Cluster) New(ctx *pulumi.Context) error {
 	output, err := eksx.NewCluster(ctx, string(c.Name), &eksx.ClusterArgs{
-		VpcId:                        c.VpcID,
-		PublicSubnetIds:              c.PublicSubnetIds,
-		PrivateSubnetIds:             c.PrivateSubnetIds,
-		NodeAssociatePublicIpAddress: pulumi.BoolRef(false),
+		Name:             c.Name,
+		VpcId:            c.VpcID,
+		PublicSubnetIds:  c.PublicSubnetIds,
+		PrivateSubnetIds: c.PrivateSubnetIds,
+		MinSize:          pulumi.Int(c.Min),
+		MaxSize:          pulumi.Int(c.Max),
+		InstanceType:     pulumi.String(c.InstanceType),
 	})
 	if err != nil {
 		return err

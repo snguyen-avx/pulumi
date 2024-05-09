@@ -15,7 +15,7 @@ type GatewayRelease struct {
 
 func (gr *GatewayRelease) New(ctx *pulumi.Context) error {
 	_, err := yaml.NewConfigFile(ctx,
-		"gw-api-crd",
+		"./config/gw-api-crd.yaml",
 		&yaml.ConfigFileArgs{File: gr.Values.Crds},
 		pulumi.Provider(gr.Provider),
 	)
@@ -27,18 +27,6 @@ func (gr *GatewayRelease) New(ctx *pulumi.Context) error {
 		Chart:           pulumi.String(gr.Values.Chart),
 		Namespace:       pulumi.String(gr.Values.Namespace),
 		CreateNamespace: pulumi.Bool(true),
-		Values: pulumi.Map{
-			"service": pulumi.Map{
-				"externalTrafficPolicy": pulumi.String(gr.Values.Service.ExternalTrafficPolicy),
-				"annotations": func() pulumi.Map {
-					pm := pulumi.Map{}
-					for k, v := range gr.Values.Service.Annotations {
-						pm[k] = pulumi.String(v)
-					}
-					return pm
-				}(),
-			},
-		},
 	},
 		pulumi.Provider(gr.Provider),
 	)

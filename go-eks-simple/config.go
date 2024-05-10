@@ -41,9 +41,6 @@ func NewConfig(ctx *pulumi.Context) *Config {
 	return &Config{
 		Vpc:           cfg.Require("vpcName"),
 		Cluster:       cfg.Require("clusterName"),
-		SecurityGroup: cfg.Require("clusterSg"),
-		IamRole:       cfg.Require("iamRole"),
-		NodeGroupRole: cfg.Require("ngrRole"),
 		Min:           cfg.Require("minSize"),
 		Max:           cfg.Require("maxSize"),
 		Type:          cfg.Require("instanceType"),

@@ -4,16 +4,14 @@ go 1.22.2
 
 require (
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.33.1
+	github.com/pulumi/pulumi-kubernetes/sdk/v4 v4.11.0
 	github.com/pulumi/pulumi/sdk/v3 v3.115.0
 )
 
 require (
 	github.com/Masterminds/semver v1.5.0 // indirect
-	github.com/fatih/color v1.15.0 // indirect
-	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/pulumi/pulumi-aws/sdk/v5 v5.35.0 // indirect
 	github.com/pulumi/pulumi-docker/sdk/v3 v3.2.0 // indirect
-	pgregory.net/rapid v0.6.1 // indirect
 )
 
 require (
@@ -25,7 +23,7 @@ require (
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
 	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
-	github.com/blang/semver v3.5.1+incompatible // indirect
+	github.com/blang/semver v3.5.1+incompatible
 	github.com/charmbracelet/bubbles v0.16.1 // indirect
 	github.com/charmbracelet/bubbletea v0.24.2 // indirect
 	github.com/charmbracelet/lipgloss v0.7.1 // indirect

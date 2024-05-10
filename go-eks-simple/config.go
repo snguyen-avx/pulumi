@@ -33,8 +33,10 @@ type GatewayValues struct {
 func NewConfig(ctx *pulumi.Context) *Config {
 	cfg := config.New(ctx, "")
 
-	gwv := &GatewayValues{}
-	cfg.RequireObject("helm", &gwv)
+	gwv := &GatewayValues{
+		Chart:     cfg.Require("helmChart"),
+		Namespace: cfg.Require("helmNamespace"),
+	}
 
 	return &Config{
 		Vpc:           cfg.Require("vpcName"),

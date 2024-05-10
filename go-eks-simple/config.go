@@ -34,8 +34,8 @@ func NewConfig(ctx *pulumi.Context) *Config {
 	cfg := config.New(ctx, "")
 
 	gwv := &GatewayValues{
-		Chart:     cfg.Require("helmChart"),
-		Namespace: cfg.Require("helmNamespace"),
+		Chart:     "oci://ghcr.io/nginxinc/charts/nginx-gateway-fabric",
+		Namespace: "nginx-gateway",
 	}
 
 	return &Config{

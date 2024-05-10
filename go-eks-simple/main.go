@@ -35,9 +35,10 @@ func main() {
 		if err := gatewayRelease.New(ctx); err != nil {
 			return err
 		}
-
-		ctx.Export("gatewayChart", gatewayRelease.Output.Chart)
-		ctx.Export("gatewayValues", gatewayRelease.Output.Values)
+		if gatewayRelease.Output != nil {
+			ctx.Export("gatewayChart", gatewayRelease.Output.Chart)
+			ctx.Export("gatewayValues", gatewayRelease.Output.Values)			
+		}
 
 		return nil
 	})

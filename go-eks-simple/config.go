@@ -17,6 +17,8 @@ type Config struct {
 	Min           string
 	Max           string
 	Type          string
+	ZoneId        string
+	RouteName     string
 	GatewayValues *GatewayValues
 }
 
@@ -44,6 +46,8 @@ func NewConfig(ctx *pulumi.Context) *Config {
 		Min:           cfg.Require("minSize"),
 		Max:           cfg.Require("maxSize"),
 		Type:          cfg.Require("instanceType"),
+		ZoneId:        cfg.Require("zoneID"),
+		RouteName:     cfg.Require("routeName"),
 		GatewayValues: gwv,
 	}
 }

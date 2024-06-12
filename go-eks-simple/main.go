@@ -12,7 +12,19 @@ func main() {
 	pulumi.Run(func(ctx *pulumi.Context) error {
 		cfg := NewConfig(ctx)
 
-		vpc := &Vpc{Name: cfg.Vpc}
+		cp, err := aws.NewProvider(ctx, "caas-provider", &aws.ProviderArgs{
+			AccessKey: pulumi.String(os.Getenv("CAAS_ACCESS")),
+			SecretKey: pulumi.String(os.Getenv("CAAS_SECRET")),
+			Region:    pulumi.String(os.Getenv("CAAS_REGION")),
+		})
+		if err != nil {
+			return err
+		}
+
+		vpc := &Vpc{
+			Name:     cfg.Vpc,
+			Provider: cp,
+		}
 		if err := vpc.New(ctx); err != nil {
 			return err
 		}
@@ -27,7 +39,7 @@ func main() {
 			Min:              cfg.MustInt(cfg.Min),
 			Max:              cfg.MustInt(cfg.Max),
 		}
-		if err := eksCluster.New(ctx); err != nil {
+		if err := eksCluster.New(ctx, cp); err != nil {
 			return err
 		}
 		ctx.Export("kubeconfig", eksCluster.Output.KubeconfigJson)
@@ -48,26 +60,28 @@ func main() {
 		}
 
 		r53p, err := aws.NewProvider(ctx, "r53-provider", &aws.ProviderArgs{
-			AccessKey: pulumi.String(os.Getenv("R53_ACCESS")),
-			SecretKey: pulumi.String(os.Getenv("R53_SECRET")),
-			Region:    pulumi.String(os.Getenv("R53_REGION")),
+			SkipMetadataApiCheck: pulumi.Bool(false),
 		})
 
 		if err != nil {
 			return err
 		}
 
-		nr, err := route53.NewRecord(ctx, "wild-route", &route53.RecordArgs{
-			ZoneId: pulumi.String(cfg.ZoneId),
-			Name:   pulumi.String(cfg.RouteName),
-			Type:   pulumi.String(route53.RecordTypeCNAME),
-			Ttl:    pulumi.Int(60),
-			Records: pulumi.StringArray{
-				gatewayRelease.Service.Status.LoadBalancer().
-					Elem().Ingress().Index(pulumi.Int(0)).
-					Hostname().Elem().ToStringOutput(),
+		nr, err := route53.NewRecord(ctx, "wild-route",
+			&route53.RecordArgs{
+				ZoneId: pulumi.String(cfg.ZoneId),
+				Name:   pulumi.String(cfg.RouteName),
+				Type:   pulumi.String(route53.RecordTypeCNAME),
+				Ttl:    pulumi.Int(60),
+				Records: pulumi.StringArray{
+					gatewayRelease.Service.Status.LoadBalancer().
+						Elem().Ingress().Index(pulumi.Int(0)).
+						Hostname().Elem().ToStringOutput(),
+				},
 			},
-		}, pulumi.Provider(r53p), pulumi.DependsOn([]pulumi.Resource{gatewayRelease.Service}))
+			pulumi.Provider(r53p),
+			pulumi.DependsOn([]pulumi.Resource{gatewayRelease.Service}),
+		)
 
 		if err != nil {
 			return err

@@ -28,16 +28,19 @@ type Cluster struct {
 	Provider         *kubernetes.Provider
 }
 
-func (c *Cluster) New(ctx *pulumi.Context) error {
-	output, err := eksx.NewCluster(ctx, string(c.Name), &eksx.ClusterArgs{
-		Name:             c.Name,
-		VpcId:            c.VpcID,
-		PublicSubnetIds:  c.PublicSubnetIds,
-		PrivateSubnetIds: c.PrivateSubnetIds,
-		MinSize:          pulumi.Int(c.Min),
-		MaxSize:          pulumi.Int(c.Max),
-		InstanceType:     pulumi.String(c.InstanceType),
-	})
+func (c *Cluster) New(ctx *pulumi.Context, cp pulumi.ProviderResource) error {
+	output, err := eksx.NewCluster(ctx, string(c.Name),
+		&eksx.ClusterArgs{
+			Name:             c.Name,
+			VpcId:            c.VpcID,
+			PublicSubnetIds:  c.PublicSubnetIds,
+			PrivateSubnetIds: c.PrivateSubnetIds,
+			MinSize:          pulumi.Int(c.Min),
+			MaxSize:          pulumi.Int(c.Max),
+			InstanceType:     pulumi.String(c.InstanceType),
+		},
+		pulumi.Provider(cp),
+	)
 	if err != nil {
 		return err
 	}
@@ -54,11 +57,14 @@ func (c *Cluster) New(ctx *pulumi.Context) error {
 	}
 	c.Provider = k8sProvider
 
-	_, err = corev1.NewNamespace(ctx, "sre", &corev1.NamespaceArgs{
-		Metadata: &metav1.ObjectMetaArgs{
-			Name: pulumi.String("sre"),
+	_, err = corev1.NewNamespace(ctx, "sre",
+		&corev1.NamespaceArgs{
+			Metadata: &metav1.ObjectMetaArgs{
+				Name: pulumi.String("sre"),
+			},
 		},
-	}, pulumi.Provider(k8sProvider))
+		pulumi.Provider(k8sProvider),
+	)
 
 	return err
 }

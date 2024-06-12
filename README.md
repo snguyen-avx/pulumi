@@ -9,9 +9,9 @@ brew update && brew upgrade pulumi
 ## aws setup
 
 ```sh
-export AWS_ACCESS_KEY_ID=""
-export AWS_SECRET_ACCESS_KEY=""
-export AWS_REGION=us-east-1
+export CAAS_ACCESS=""
+export CAAS_SECRET=""
+export CAAS_REGION=us-east-1
 pulumi login 's3://pulumi-demo-local?region=us-east-1'    
 pulumi stack init --secrets-provider="awskms://<key>?region=us-east-1" 
 ```

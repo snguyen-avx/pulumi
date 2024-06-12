@@ -17,7 +17,8 @@ type GatewayRelease struct {
 }
 
 func (gr *GatewayRelease) New(ctx *pulumi.Context) error {
-	crds, err := yaml.NewConfigFile(ctx,
+	crds, err := yaml.NewConfigFile(
+		ctx,
 		"gw-api-crd",
 		&yaml.ConfigFileArgs{File: "./config/gw-api-crd.yaml"},
 		pulumi.Provider(gr.Provider),

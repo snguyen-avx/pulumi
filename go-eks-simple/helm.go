@@ -37,6 +37,7 @@ func (gr *GatewayRelease) New(ctx *pulumi.Context) error {
 				"create": pulumi.Bool(false),
 			},
 		},
+		Timeout: pulumi.Int(600),
 	},
 		pulumi.Provider(gr.Provider),
 		pulumi.DependsOn([]pulumi.Resource{crds}),

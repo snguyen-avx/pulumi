@@ -24,3 +24,4 @@ Pulumi.go-eks-simple-dev.yaml
 caas.yaml
 caas3.yaml 
 Pulumi.dev.yaml
+test.yaml

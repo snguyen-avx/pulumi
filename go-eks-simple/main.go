@@ -1,8 +1,6 @@
 package main
 
 import (
-	"os"
-
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/route53"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
@@ -12,18 +10,8 @@ func main() {
 	pulumi.Run(func(ctx *pulumi.Context) error {
 		cfg := NewConfig(ctx)
 
-		cp, err := aws.NewProvider(ctx, "caas-provider", &aws.ProviderArgs{
-			AccessKey: pulumi.String(os.Getenv("CAAS_ACCESS")),
-			SecretKey: pulumi.String(os.Getenv("CAAS_SECRET")),
-			Region:    pulumi.String(os.Getenv("CAAS_REGION")),
-		})
-		if err != nil {
-			return err
-		}
-
 		vpc := &Vpc{
-			Name:     cfg.Vpc,
-			Provider: cp,
+			Name: cfg.Vpc,
 		}
 		if err := vpc.New(ctx); err != nil {
 			return err
@@ -39,7 +27,7 @@ func main() {
 			Min:              cfg.MustInt(cfg.Min),
 			Max:              cfg.MustInt(cfg.Max),
 		}
-		if err := eksCluster.New(ctx, cp); err != nil {
+		if err := eksCluster.New(ctx); err != nil {
 			return err
 		}
 		ctx.Export("kubeconfig", eksCluster.Output.KubeconfigJson)
@@ -60,9 +48,13 @@ func main() {
 		}
 
 		r53p, err := aws.NewProvider(ctx, "r53-provider", &aws.ProviderArgs{
-			SkipMetadataApiCheck: pulumi.Bool(false),
+			AssumeRole: &aws.ProviderAssumeRoleArgs{
+				RoleArn:     pulumi.StringPtr(cfg.RoleToAssumeARN),
+				SessionName: pulumi.String("PulumiSession"),
+				ExternalId:  pulumi.String("PulumiApplication"),
+			},
+			Region: pulumi.String(cfg.RoleToAssumeRegion),
 		})
-
 		if err != nil {
 			return err
 		}

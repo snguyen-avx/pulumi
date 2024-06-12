@@ -9,17 +9,19 @@ import (
 )
 
 type Config struct {
-	Vpc           string
-	Cluster       string
-	SecurityGroup string
-	IamRole       string
-	NodeGroupRole string
-	Min           string
-	Max           string
-	Type          string
-	ZoneId        string
-	RouteName     string
-	GatewayValues *GatewayValues
+	Vpc                string
+	Cluster            string
+	SecurityGroup      string
+	IamRole            string
+	NodeGroupRole      string
+	Min                string
+	Max                string
+	Type               string
+	ZoneId             string
+	RouteName          string
+	RoleToAssumeARN    string
+	RoleToAssumeRegion string
+	GatewayValues      *GatewayValues
 }
 
 type GatewayValues struct {
@@ -39,16 +41,17 @@ func NewConfig(ctx *pulumi.Context) *Config {
 		Chart:     "oci://ghcr.io/nginxinc/charts/nginx-gateway-fabric",
 		Namespace: "nginx-gateway",
 	}
-
 	return &Config{
-		Vpc:           cfg.Require("vpcName"),
-		Cluster:       cfg.Require("clusterName"),
-		Min:           cfg.Require("minSize"),
-		Max:           cfg.Require("maxSize"),
-		Type:          cfg.Require("instanceType"),
-		ZoneId:        cfg.Require("zoneID"),
-		RouteName:     cfg.Require("routeName"),
-		GatewayValues: gwv,
+		Vpc:                cfg.Require("vpcName"),
+		Cluster:            cfg.Require("clusterName"),
+		Min:                cfg.Require("minSize"),
+		Max:                cfg.Require("maxSize"),
+		Type:               cfg.Require("instanceType"),
+		ZoneId:             cfg.Require("zoneID"),
+		RouteName:          cfg.Require("routeName"),
+		RoleToAssumeARN:    cfg.Require("roleToAssumeARN"),
+		RoleToAssumeRegion: cfg.Require("roleToAssumeRegion"),
+		GatewayValues:      gwv,
 	}
 }
 

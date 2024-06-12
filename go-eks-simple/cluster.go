@@ -28,7 +28,7 @@ type Cluster struct {
 	Provider         *kubernetes.Provider
 }
 
-func (c *Cluster) New(ctx *pulumi.Context, cp pulumi.ProviderResource) error {
+func (c *Cluster) New(ctx *pulumi.Context) error {
 	output, err := eksx.NewCluster(ctx, string(c.Name),
 		&eksx.ClusterArgs{
 			Name:             c.Name,
@@ -39,7 +39,6 @@ func (c *Cluster) New(ctx *pulumi.Context, cp pulumi.ProviderResource) error {
 			MaxSize:          pulumi.Int(c.Max),
 			InstanceType:     pulumi.String(c.InstanceType),
 		},
-		pulumi.Provider(cp),
 	)
 	if err != nil {
 		return err

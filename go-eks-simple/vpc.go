@@ -12,6 +12,7 @@ type Vpc struct {
 	Output         ec2.VpcOutput
 	PublicSubnets  pulumi.StringArrayOutput
 	PrivateSubnets pulumi.StringArrayOutput
+	Provider       pulumi.ProviderResource
 }
 
 type Subnet struct {
@@ -44,7 +45,7 @@ func GetSubnet(ctx *pulumi.Context) (*Subnet, error) {
 
 func (v *Vpc) New(ctx *pulumi.Context) error {
 
-	vpc, err := ec2x.NewVpc(ctx, v.Name, nil)
+	vpc, err := ec2x.NewVpc(ctx, v.Name, nil, pulumi.Provider(v.Provider))
 	if err != nil {
 		return err
 	}

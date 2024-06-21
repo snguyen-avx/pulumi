@@ -1,0 +1,7 @@
+name: go-vpc-precompiled
+description: A minimal AWS Go Pulumi program
+runtime:
+  name: go
+  options:
+    binary: go-vpc-precompiled.out
+    

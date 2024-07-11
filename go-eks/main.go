@@ -30,7 +30,7 @@ func main() {
 			InstanceType:     cfg.Type,
 			Min:              cfg.MustInt(cfg.Min),
 			Max:              cfg.MustInt(cfg.Max),
-			AwsProvider:      cfg.Provider,
+			// AwsProvider:      cfg.Provider,
 		}
 		if err := eksCluster.New(ctx); err != nil {
 			return err
@@ -65,6 +65,7 @@ func main() {
 				},
 			},
 			pulumi.DependsOn([]pulumi.Resource{gatewayRelease.Service}),
+			pulumi.Provider(cfg.Provider),
 		)
 
 		if err != nil {

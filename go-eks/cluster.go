@@ -41,7 +41,7 @@ func (c *Cluster) New(ctx *pulumi.Context) error {
 			MaxSize:          pulumi.Int(c.Max),
 			InstanceType:     pulumi.String(c.InstanceType),
 		},
-		pulumi.Provider(c.AwsProvider),
+		// pulumi.Provider(c.AwsProvider),
 	)
 	if err != nil {
 		return err
